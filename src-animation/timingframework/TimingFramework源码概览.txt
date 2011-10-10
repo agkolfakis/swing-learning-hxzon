@@ -1,0 +1,251 @@
+TimingFramework源码概览 -hxzon
+
+TimingFramework源码品读 TimingFramework-3.0
+
+本文：http://hi.baidu.com/hxzon/blog/item/fe80c05c6df54e58faf2c0f7.html
+
+参考阅读：http://hi.baidu.com/hxzon/blog/item/b921411079f189f1c2ce79ff.html
+
+==========================================
+
+Animator(long duration, TimeUnit durationTimeUnit, EndBehavior endBehavior, Interpolator interpolator,
+      RepeatBehavior repeatBehavior, long repeatCount, Direction startDirection, TimingSource timingSource) {
+    f_duration = duration;//动画总时间
+    f_durationTimeUnit = durationTimeUnit;//动画时间单位
+    f_endBehavior = endBehavior;//动画终点行为，保持终点状态或重设为起点状态
+    f_interpolator = interpolator;//中间值插补器
+    f_repeatBehavior = repeatBehavior;//动画重复类型，从新循环或回滚循环
+    f_repeatCount = repeatCount;//动画重复次数
+    f_startDirection = f_currentDirection = startDirection;//动画方向，向前或后退
+    f_timingSource = timingSource;//时钟源
+  }
+
+public void Animator.addTarget(TimingTarget target) 添加定时动作
+
+
+=========================================
+
+public interface TimingTarget {
+
+  /**
+   * Called when the animation begins. This provides a chance for targets to
+   * perform any setup required at animation start time.
+   * 
+   * @param source
+   *          the animation.
+   */
+  public void begin(Animator source);
+
+  /**
+   * Called when the animation ends.
+   * 
+   * @param source
+   *          the animation.
+   */
+  public void end(Animator source);
+
+  /**
+   * Called when the animation repeats the animation cycle. This method will be
+   * invoked {@link Animator#getRepeatCount()} - 1 times, unless
+   * {@link Animator#getRepeatCount()} == {@link Animator#INFINITE} in which
+   * case it will be invoked until the animation is manually stopped.
+   * 
+   * @param source
+   *          the animation.
+   */
+  public void repeat(Animator source);
+
+  /**
+   * Called when a running animation is reversed via
+   * {@link Animator#reverseNow()}. This method is not invoked when
+   * {@link Animator#startReverse()} is called&mdash;it is only used as a
+   * notification when a running animation is reversed.
+   * 
+   * @param source
+   *          the animation.
+   */
+  public void reverse(Animator source);
+
+  /**
+   * This method will receive all of the timing events during an animation. The
+   * fraction is the percent elapsed (0 to 1) of the current animation cycle.
+   * 
+   * @param source
+   *          the animation.
+   * @param fraction
+   *          the fraction of completion between the start and end of the
+   *          current cycle. Note that on reversing cycles (
+   *          {@link Animator.Direction#BACKWARD}) the fraction decreases from
+   *          1.0 to 0 on backwards-running cycles. Note also that animations
+   *          with a duration of {@link Animator#INFINITE INFINITE} will have an
+   *          undefined value for the fraction, since there is no fraction that
+   *          makes sense if the animation has no defined length.
+   */
+  public void timingEvent(Animator source, double fraction);
+}
+
+定时动作，如PropertySetterTimingTarget，PropertySetterToTimingTarget。（父类KeyFramesTimingTarget<T>）
+
+==============================
+
+public interface Trigger {
+
+  /**
+   * Disables this trigger. If the event that fires this trigger occurs
+   * subsequently it will be ignored.
+   */
+  void disarm();
+
+  /**
+   * Gets if this trigger is armed.
+   * 
+   * @return {@code true} indicates that this trigger is armed, {@code false}
+   *         indicates that it has been disarmed with a call to
+   *         {@link #disarm()}.
+   */
+  boolean isArmed();
+}
+
+动画触发器，如FocusTriggerHelper，MouseTriggerHelper，ActionTriggerHelper，TimingTriggerHelper。
+
+==================================
+
+/**
+ * This interface provides a mechanism for animating object properties between
+ * different values. It defines the single {@link #interpolate(double)} method.
+ * <p>
+ * This interface is implemented by built-in interpolators. Applications may
+ * choose to implement their own interpolator to get custom interpolation
+ * behavior.
+ * 
+ * @author Chet Haase
+ * 
+ * @see AccelerationInterpolator
+ * @see DiscreteInterpolator
+ * @see LinearInterpolator
+ * @see SplineInterpolator
+ */
+@Immutable
+public interface Interpolator {
+
+  /**
+   * This function takes an input value between 0 and 1 and returns another
+   * value, also between 0 and 1. The purpose of the function is to define how
+   * time (represented as a (0-1) fraction of the duration of an animation) is
+   * altered to derive different value calculations during an animation.
+   * 
+   * @param fraction
+   *          a value between 0 and 1, inclusive, representing the elapsed
+   *          fraction of a time interval.
+   * @return a value between 0 and 1, inclusive. Values outside of this boundary
+   *         may be clamped to the interval [0,1] and cause undefined results.
+   */
+  public double interpolate(double fraction);
+}
+
+中间值插补器，如线性插补器，如下，
+
+public final class LinearInterpolator implements Interpolator {
+
+  /**
+   * This method always returns the value it was given, which will cause callers
+   * to calculate a linear interpolation between boundary values.
+   * 
+   * @param fraction
+   *          a value between 0 and 1, representing the elapsed fraction of a
+   *          time interval (either an entire animation cycle or an interval
+   *          between two KeyTimes, depending on where this {@link Interpolator}
+   *          has been set)
+   * @return the value passed in as the <code>fraction</code> parameter.
+   */
+  public double interpolate(double fraction) {
+    return fraction;
+  }
+}
+
+===================================
+
+Evaluator<T> 求值子
+
+   /**
+   * Evaluates between two boundary values. Typically implementations use linear
+   * parametric evaluation:
+   * 
+   * <pre>
+   * v = v0 + (v1 - v0) * fraction
+   * </pre>
+   * 
+   * Implementations of {@link Evaluator} will need to override this method and
+   * do something similar for their own types.
+   * <p>
+   * Note that this mechanism may be used to create non-linear interpolators for
+   * specific value types, although it may be simpler to just use the
+   * linear/parametric interpolation technique here and perform non-linear
+   * interpolation through a custom {@link Interpolator} rather than perform
+   * custom calculations in this method. The point of this class is to allow
+   * calculations with new/unknown types, not to provide another mechanism for
+   * non-linear interpolation.
+   */
+  T evaluate(T v0, T v1, double fraction);
+
+新值 x= x0+(x1-x0)*timeFraction，其中 timeFraction为时间逝去分数，timeFraction=(currentTime-startTime)/animationDuration。
+
+如颜色求值子，如下，
+
+public final class EvaluatorColor implements Evaluator<Color> {
+
+  @Override
+  public Color evaluate(Color v0, Color v1, double fraction) {
+    int r = v0.getRed() + (int) ((v1.getRed() - v0.getRed()) * fraction + 0.5f);
+    int g = v0.getGreen() + (int) ((v1.getGreen() - v0.getGreen()) * fraction + 0.5f);
+    int b = v0.getBlue() + (int) ((v1.getBlue() - v0.getBlue()) * fraction + 0.5f);
+    int a = v0.getAlpha() + (int) ((v1.getAlpha() - v0.getAlpha()) * fraction + 0.5f);
+    Color value = new Color(r, g, b, a);
+    return value;
+  }
+
+  @Override
+  public Class<Color> getEvaluatorClass() {
+    return Color.class;
+  }
+}
+
+====================================
+
+KeyFrames<T> 帧系列
+
+Frame 帧
+
+    /**
+     * Constructs a new key frame.
+     * 
+     * @param value
+     *          the value of this key frame. Client code should <i>never</i>
+     *          mutate values that have been passed into an instance.
+     * @param atTimeFraction
+     *          the time fraction in the range [0,1] when the value should
+     *          occur. A negative value indicates, to the
+     *          {@link KeyFramesBuilder} that this instance is passed to, that
+     *          the time fraction when this fame occurs should be calculated,
+     *          linearly, from the previous and next specified time fractions.
+     * @param interpolator
+     *          the interpolator that should be used between the previous key
+     *          frame and this one. A {@code null} value indicates, to the
+     *          {@link KeyFramesBuilder} that this instance is passed to, that
+     *          either the interpolator set with
+     *          {@link KeyFramesBuilder#setInterpolator(Interpolator)} or the
+     *          default {@link LinearInterpolator} should be used for this key
+     *          frame.
+     * 
+     * @throws IllegalArgumentException
+     *           if <tt>value</tt> is {@code null}.
+     */
+    public Frame(T value, double atTimeFraction, Interpolator interpolator) {
+      if (value == null)
+        throw new IllegalArgumentException(I18N.err(1, "value"));
+      f_value = value;
+      f_timeFraction = atTimeFraction;
+      f_interpolator = interpolator;
+    }
+
+ 
