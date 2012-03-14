@@ -49,7 +49,6 @@ import javax.swing.text.MaskFormatter;
 
 import org.hxzon.newui.HSwingUtils.NewComboPopup;
 
-
 public class JDateTimeChooser2 extends JPanel {
 //    static{
 //        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -61,15 +60,14 @@ public class JDateTimeChooser2 extends JPanel {
     private JSpinner timeSpinner = new JSpinner(new SpinnerDateModel());
 
     private Calendar calendar = Calendar.getInstance();
-    static String pattern="yyyy-MM-dd";
-    static SimpleDateFormat format=new SimpleDateFormat(pattern);
-    
+    static String pattern = "yyyy-MM-dd";
+    static SimpleDateFormat format = new SimpleDateFormat(pattern);
+
 //    private PropertyChangeListener forward;
 
     public JDateTimeChooser2(Calendar initialDate, boolean showTime) {
         this.setBackground(Color.white);
-        this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory
-                .createEtchedBorder()));
+        this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0), BorderFactory.createEtchedBorder()));
         this.setLayout(new GridLayout(1, 2, 5, 10));
         JPanel p1 = new JPanel();
         p1.setBackground(Color.white);
@@ -84,14 +82,14 @@ public class JDateTimeChooser2 extends JPanel {
 //            }
 //            
 //        };
-        
+
         yearSpinner.setPreferredSize(new Dimension(50, 25));
 //        yearSpinner.addPropertyChangeListener("year",forward);
         p11.add(yearSpinner);
         monthSpinner.setPreferredSize(new Dimension(80, 25));
 //        monthSpinner.addPropertyChangeListener("month",forward);
         p11.add(monthSpinner);
-        
+
         p1.add(p11, BorderLayout.NORTH);
 //        dayGrid.addPropertyChangeListener("day",forward);
         p1.add(dayGrid);
@@ -161,7 +159,7 @@ public class JDateTimeChooser2 extends JPanel {
 
             @Override
             public void windowClosed(WindowEvent e) {
-                
+
             }
 
             @Override
@@ -173,36 +171,35 @@ public class JDateTimeChooser2 extends JPanel {
 
         return (dc == null) ? null : dc.getCalendar();
     }
-    static MaskFormatter mf1=null;
 
-    public static JPanel build(final JButton button){
-        JPanel panel=new JPanel(new BorderLayout());
+    static MaskFormatter mf1 = null;
+
+    public static JPanel build(final JButton button) {
+        JPanel panel = new JPanel(new BorderLayout());
 //        try {
 //            mf1 = new MaskFormatter("####-##-##");
 //            mf1.setPlaceholderCharacter('_');
 //        } catch (ParseException e1) {
 //            e1.printStackTrace();
 //        }
-          final JFormattedTextField field = new 
-            JFormattedTextField(new DateFormatter(format));
+        final JFormattedTextField field = new JFormattedTextField(new DateFormatter(format));
 //        button.setFocusable(false);
-        final JDateTimeChooser2 chooser=new JDateTimeChooser2(null,false);
+        final JDateTimeChooser2 chooser = new JDateTimeChooser2(null, false);
         final JPopupMenu popup = new JPopupMenu();
-        PropertyChangeListener listener=new PropertyChangeListener(){
+        PropertyChangeListener listener = new PropertyChangeListener() {
 
             @Override
             public void propertyChange(PropertyChangeEvent e) {
-                if("day".equals(e.getPropertyName())){
-                popup.setVisible(false);
+                if ("day".equals(e.getPropertyName())) {
+                    popup.setVisible(false);
 //                    format.applyPattern("yyyy-MM-dd");
                     field.setText(format.format(chooser.getCalendar().getTime()));
                 }
             }
 
-            
         };
         chooser.addPropertyChangeListener(listener);
-        AbstractAction action=new AbstractAction(button.getActionCommand()){//
+        AbstractAction action = new AbstractAction(button.getActionCommand()) {//
             @Override
             public void actionPerformed(ActionEvent e) {
                 int x = button.getWidth() - (int) popup.getPreferredSize().getWidth();
@@ -210,12 +207,12 @@ public class JDateTimeChooser2 extends JPanel {
                 popup.show(button, x, y);
             }
         };
-        
+
         popup.add(chooser);
 //        popup.setLightWeightPopupEnabled(true);
         button.setAction(action);
-        panel.add(field,BorderLayout.CENTER);
-        panel.add(button,BorderLayout.EAST);
+        panel.add(field, BorderLayout.CENTER);
+        panel.add(button, BorderLayout.EAST);
         return panel;
     }
 
@@ -249,7 +246,7 @@ public class JDateTimeChooser2 extends JPanel {
                     JButton b = (JButton) e.getSource();
                     if (b.getText() != null) {
                         setDay(Integer.parseInt(b.getText()));
-                        JDateTimeChooser2.this.firePropertyChange("day",0,day);
+                        JDateTimeChooser2.this.firePropertyChange("day", 0, day);
                         // SwingUtilities.windowForComponent(b).dispose();//fixme
                         // SwingUtilities.windowForComponent(b).setVisible(false);
                     }
@@ -352,14 +349,14 @@ public class JDateTimeChooser2 extends JPanel {
 
         public MonthChooser() {
             super(new BorderLayout());
-            comboBox = new JComboBox(){
+            comboBox = new JComboBox() {
                 public void updateUI() {
-                    setUI(new BasicComboBoxUI(){
+                    setUI(new BasicComboBoxUI() {
                         protected ComboPopup createPopup() {
                             return new NewComboPopup(comboBox);
                         }
                     });
-                }    
+                }
             };
             comboBox.addItemListener(this);
 
@@ -388,13 +385,13 @@ public class JDateTimeChooser2 extends JPanel {
                 newMonth += 1;
                 if (newMonth == 12) {
                     newMonth = 0;
-                    yearSpinner.setYear(( yearSpinner.getYear()) + 1);
+                    yearSpinner.setYear((yearSpinner.getYear()) + 1);
                 }
             } else {
                 newMonth -= 1;
                 if (newMonth == -1) {
                     newMonth = 11;
-                    yearSpinner.setYear(( yearSpinner.getYear()) - 1);
+                    yearSpinner.setYear((yearSpinner.getYear()) - 1);
                 }
             }
             setMonth(newMonth);
@@ -405,7 +402,7 @@ public class JDateTimeChooser2 extends JPanel {
                 int index = comboBox.getSelectedIndex();
 
 //                if ((index >= 0) && (index != month)) {
-                    setMonth(index);
+                setMonth(index);
 //                }
             }
         }
@@ -430,7 +427,7 @@ public class JDateTimeChooser2 extends JPanel {
         }
 
     }
-    
+
     private class YearSpinner extends JSpinner {
         public YearSpinner() {
             this(1, 9999);
@@ -449,12 +446,12 @@ public class JDateTimeChooser2 extends JPanel {
 
             });
         }
-        
-        public int getYear(){
-            return (Integer)getValue();
+
+        public int getYear() {
+            return (Integer) getValue();
         }
-        
-        public void setYear(int year){
+
+        public void setYear(int year) {
             setValue(year);
         }
 
@@ -484,15 +481,15 @@ public class JDateTimeChooser2 extends JPanel {
 //        f.setVisible(true);
 //
 //    }
-    
-    public static void main(String args[]) throws Exception{
+
+    public static void main(String args[]) throws Exception {
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        final JFrame f=new JFrame();
+        final JFrame f = new JFrame();
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(500, 100);
         f.setLocation(300, 300);
-        JButton button=new JButton("取消");
+        JButton button = new JButton("取消");
 //        JFormattedTextField field=new JFormattedTextField();
         f.add(build(button));
 //        f.add(field,BorderLayout.CENTER);

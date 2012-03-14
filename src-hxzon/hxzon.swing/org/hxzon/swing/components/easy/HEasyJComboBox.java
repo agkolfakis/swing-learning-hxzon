@@ -7,10 +7,10 @@ import org.hxzon.swing.model.HEasyJComboBoxModel;
 import org.hxzon.swing.model.HEasyJModelValue;
 
 public class HEasyJComboBox<V> extends JComboBox {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public HEasyJComboBox() {
-		super(new HEasyJComboBoxModel<V>());
+    public HEasyJComboBox() {
+        super(new HEasyJComboBoxModel<V>());
 //		this.addListSelectionListener(new ListSelectionAction() {
 //
 //			@Override
@@ -24,31 +24,31 @@ public class HEasyJComboBox<V> extends JComboBox {
 //			}
 //
 //		});
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	public HEasyJModelValue<V> getValueWrap() {
-		return (HEasyJModelValue<V>) super.getSelectedItem();
-	}
+    @SuppressWarnings("unchecked")
+    public HEasyJModelValue<V> getValueWrap() {
+        return (HEasyJModelValue<V>) super.getSelectedItem();
+    }
 
-	public V getValue() {
-		return getValueWrap().value;
-	}
+    public V getValue() {
+        return getValueWrap().value;
+    }
 
-	public void addItem(HEasyJModelValue<V> value) {
-		this.getModel().addValue(value);
-	}
+    public void addItem(HEasyJModelValue<V> value) {
+        this.getModel().addValue(value);
+    }
 
-	@SuppressWarnings("unchecked")
-	public HEasyJComboBoxModel<V> getModel() {
-		return (HEasyJComboBoxModel<V>) super.getModel();
-	}
+    @SuppressWarnings("unchecked")
+    public HEasyJComboBoxModel<V> getModel() {
+        return (HEasyJComboBoxModel<V>) super.getModel();
+    }
 
-	public void setModel(ComboBoxModel model) {
-		if (model instanceof HEasyJComboBoxModel) {
-			super.setModel(model);
-		}
-	}
+    public void setModel(ComboBoxModel model) {
+        if (model instanceof HEasyJComboBoxModel) {
+            super.setModel(model);
+        }
+    }
 
 //	public ExListValue<V>[] getSelectedValues() {
 //		ListSelectionModel sm = getSelectionModel();

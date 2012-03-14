@@ -5,24 +5,24 @@ import java.util.List;
 
 public class ErrorMsg {
 
-	private final List<String> _errorMsg = new ArrayList<String>();
+    private final List<String> _errorMsg = new ArrayList<String>();
 
-	public void addErrorMsg(String errorMsg) {
-		_errorMsg.add(errorMsg);
-	}
+    public void addErrorMsg(String errorMsg) {
+        _errorMsg.add(errorMsg);
+    }
 
-	public void clearErrorMsg() {
-		_errorMsg.clear();
-	}
+    public void clearErrorMsg() {
+        _errorMsg.clear();
+    }
 
-	public String getFirstErrorMsg() {
-		if (hasError()) {
-			return _errorMsg.get(0);
-		}
-		return null;
-	}
+    public String getFirstErrorMsg() {
+        if (hasError()) {
+            return _errorMsg.get(0);
+        }
+        return null;
+    }
 
-	public boolean hasError() {
-		return !_errorMsg.isEmpty();
-	}
+    public boolean hasError() {
+        return !_errorMsg.isEmpty();
+    }
 }

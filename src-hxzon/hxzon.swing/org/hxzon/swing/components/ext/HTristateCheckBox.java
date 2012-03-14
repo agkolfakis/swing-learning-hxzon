@@ -10,16 +10,16 @@ import javax.swing.ButtonModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-    
+
 public class HTristateCheckBox extends JCheckBox {
-    
+
     private static final long serialVersionUID = 1L;
     public final static int SELECTED = 1;
     public final static int DESELECTED = 2;
     public final static int NOTSPECIFIED = 3;
-    
+
     class ProxyHandler implements InvocationHandler {
-        public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String methodName = method.getName();
             if (isEnabled() && !isPainting && methodName.equals("setPressed")) {
                 boolean isPressed = ((Boolean) args[0]).booleanValue();
@@ -28,8 +28,7 @@ public class HTristateCheckBox extends JCheckBox {
                 }
             }
             if (isPainting && state == NOTSPECIFIED) {
-                if (methodName.equals("isPressed")
-                        || methodName.equals("isArmed")) {
+                if (methodName.equals("isPressed") || methodName.equals("isArmed")) {
                     return Boolean.TRUE;
                 }
             }
@@ -50,37 +49,35 @@ public class HTristateCheckBox extends JCheckBox {
             return method.invoke(buttonModel, args);
         }
     }
-    
+
     private boolean isPainting = false;
     private ButtonModel buttonModel = null;
     private int state = DESELECTED;
-    
+
     public HTristateCheckBox() {
         this(null);
     }
-    
+
     public HTristateCheckBox(String text) {
         this(text, false);
     }
-    
+
     public HTristateCheckBox(String text, boolean isSelected) {
         this(text, isSelected ? SELECTED : DESELECTED);
     }
-    
+
     public HTristateCheckBox(String text, int state) {
         super(text, null, false);
         this.buttonModel = this.getModel();
-        ButtonModel proxyModel = (ButtonModel) Proxy.newProxyInstance(
-                HTristateCheckBox.class.getClassLoader(),
-                new Class[] { ButtonModel.class }, new ProxyHandler());
+        ButtonModel proxyModel = (ButtonModel) Proxy.newProxyInstance(HTristateCheckBox.class.getClassLoader(), new Class[] { ButtonModel.class }, new ProxyHandler());
         this.setModel(proxyModel);
         this.setState(state);
     }
-    
+
     public int getState() {
         return state;
     }
-    
+
     public void nextState() {
         if (state == SELECTED) {
             state = NOTSPECIFIED;
@@ -91,17 +88,17 @@ public class HTristateCheckBox extends JCheckBox {
         }
         this.fireStateChanged();
     }
-    
+
     public void setState(int state) {
         this.state = state;
     }
-    
+
     public void paintComponent(Graphics g) {
         isPainting = true;
         super.paintComponent(g);
         isPainting = false;
     }
-    
+
     public static void main(String args[]) throws Exception {
         JFrame frame = new JFrame("TWaver中文社区-twaver.servasoft.com");
         JPanel contentPane = new JPanel();
@@ -117,4 +114,3 @@ public class HTristateCheckBox extends JCheckBox {
     }
 
 }
-

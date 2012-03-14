@@ -6,51 +6,51 @@ import org.hxzon.validate.core.ErrorMsg;
 import org.hxzon.validate.core.Validator;
 
 public interface HSwingField {
-	public HSwingField setName(String name);
+    public HSwingField setName(String name);
 
-	public String getName();
+    public String getName();
 
-	public HSwingField setDesc(String name);
+    public HSwingField setDesc(String name);
 
-	public String getDesc();
+    public String getDesc();
 
-	public HSwingField setLabel(JComponent label);
+    public HSwingField setLabel(JComponent label);
 
-	public JComponent getLabel();
+    public JComponent getLabel();
 
-	public HSwingField setNoLabel(boolean b);
+    public HSwingField setNoLabel(boolean b);
 
-	public boolean isNoLabel();
+    public boolean isNoLabel();
 
-	public JComponent getInput();
+    public JComponent getInput();
 
-	public boolean isEditable();
+    public boolean isEditable();
 
-	public HSwingField setEditable(boolean b);
+    public HSwingField setEditable(boolean b);
 
-	public HSwingField setValidator(Validator validater);
+    public HSwingField setValidator(Validator validater);
 
-	public Validator getValidator();
+    public Validator getValidator();
 
-	public Object getValue();
+    public Object getValue();
 
-	public Object getPreValue();
+    public Object getPreValue();
 
-	public HSwingField setRestrict(String restrict);
+    public HSwingField setRestrict(String restrict);
 
-	public HSwingField setValidateWhenKeyUp(boolean b);
+    public HSwingField setValidateWhenKeyUp(boolean b);
 
-	public HSwingField setValidateWhenBlur(boolean b);
+    public HSwingField setValidateWhenBlur(boolean b);
 
-	public boolean isValidateWhenKeyUp();
+    public boolean isValidateWhenKeyUp();
 
-	public boolean isValidateWhenBlur();
+    public boolean isValidateWhenBlur();
 
-	public HSwingField setErrorMsg(ErrorMsg msg);
+    public HSwingField setErrorMsg(ErrorMsg msg);
 
-	public ErrorMsg getErrorMsg();
-	
-	public void apply();
-	
-	public void validate();
+    public ErrorMsg getErrorMsg();
+
+    public void apply();
+
+    public void validate();
 }

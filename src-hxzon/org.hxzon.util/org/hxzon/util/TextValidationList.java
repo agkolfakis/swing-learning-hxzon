@@ -14,29 +14,31 @@ import java.util.regex.Pattern;
 
 public class TextValidationList {
     private static Map<String, Class<? extends Checker>> checkersClass = new HashMap<String, Class<? extends Checker>>();
-    private static Map<String,Checker> checkers=new HashMap<String,Checker>();
-    private static Map<String,List<Checker>> lists=new HashMap<String,List<Checker>>();
-    
+    private static Map<String, Checker> checkers = new HashMap<String, Checker>();
+    private static Map<String, List<Checker>> lists = new HashMap<String, List<Checker>>();
+
     private List<Checker> checkerList = new ArrayList<Checker>();
-    private List<String> managers=new ArrayList<String>();
-    
-    static{
+    private List<String> managers = new ArrayList<String>();
+
+    static {
         registerDefaultChecker();
     }
-    public static TextValidationList newList(String name){
+
+    public static TextValidationList newList(String name) {
         lists.put(name, new ArrayList<Checker>());
         return new TextValidationList(lists.get(name));
     }
-    
-    public static TextValidationList getList(String name){
+
+    public static TextValidationList getList(String name) {
         return new TextValidationList(lists.get(name));
     }
+
     //
-    public TextValidationList(){
+    public TextValidationList() {
     }
-    
-    private TextValidationList(List<Checker> checkerList){
-        this.checkerList=checkerList;
+
+    private TextValidationList(List<Checker> checkerList) {
+        this.checkerList = checkerList;
     }
 
     public void check(String value, String fieldName) {
@@ -54,7 +56,7 @@ public class TextValidationList {
             ValidationManager.getManager(name).set(fieldName, true, "");
         }
     }
-    
+
     public String trimValue(String value) {
         if (value == null) {
             return "";
@@ -84,10 +86,9 @@ public class TextValidationList {
 
     public TextValidationList addChecker(String name, String constraints) {
         Checker checker = null;
-        if(constraints ==null || constraints.isEmpty()){
-            checker=checkers.get(name);
-        }
-        else {
+        if (constraints == null || constraints.isEmpty()) {
+            checker = checkers.get(name);
+        } else {
             try {
                 Class clazz = checkersClass.get(name);
                 checker = (Checker) clazz.newInstance();
@@ -130,33 +131,33 @@ public class TextValidationList {
         checkerList.clear();
         return this;
     }
-    
-    public TextValidationList addManager(String name){
+
+    public TextValidationList addManager(String name) {
         managers.add(name);
         return this;
     }
-    
-    public TextValidationList removeManager(String name){
+
+    public TextValidationList removeManager(String name) {
         managers.remove(name);
         return this;
     }
-    
-    public TextValidationList clearManager(String name){
+
+    public TextValidationList clearManager(String name) {
         managers.clear();
         return this;
     }
-    
-    public static void registerChecker(String name,Checker checker){
+
+    public static void registerChecker(String name, Checker checker) {
         checkers.put(name, checker);
         checkersClass.put(name, checker.getClass());
     }
-    
-    public static void unregisterChecker(String name){
+
+    public static void unregisterChecker(String name) {
         checkers.remove(name);
         checkersClass.remove(name);
     }
 
-    public static void registerDefaultChecker(){
+    public static void registerDefaultChecker() {
         registerChecker("notNull", new NotNullChecker());
         registerChecker("length", new LengthChecker());
         registerChecker("int", new IntegerChecker());
@@ -166,21 +167,20 @@ public class TextValidationList {
         registerChecker("date", new DateChecker());
         registerChecker("time", new TimeChecker());
         registerChecker("datetime", new DateTimeChecker());
-        
+
     }
-    
-       
 
     public Checker getChecker(String name) {
         return null;//checkerMap.get(name);
     }
 
     //CheckerException
-    public static class CheckerException extends RuntimeException{
-        public CheckerException(String message){
+    public static class CheckerException extends RuntimeException {
+        public CheckerException(String message) {
             super(message);
         }
     }
+
     //Checker
     public static abstract class Checker {
         private Map<String, String> properties = new HashMap<String, String>();
@@ -280,7 +280,7 @@ public class TextValidationList {
 
         public void valid(String value) {
             if (value == null || value.isEmpty()) {
-                return ;
+                return;
             }
             BigInteger intValue = null;
             try {
@@ -316,7 +316,7 @@ public class TextValidationList {
 
         public void valid(String value) {
             if (value == null || value.isEmpty()) {
-                return ;
+                return;
             }
             BigDecimal intValue = null;
             try {
@@ -353,7 +353,7 @@ public class TextValidationList {
 
         public void valid(String value) {
             if (value == null || value.isEmpty()) {
-                return ;
+                return;
             }
             Date date = null;
             try {
@@ -416,7 +416,7 @@ public class TextValidationList {
 
         public void valid(String value) {
             if (value == null || value.isEmpty()) {
-                return ;
+                return;
             }
             Pattern pattern = null;
             if (getNullBeEmpty("caseInsensitive").isEmpty()) {
